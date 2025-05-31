@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Birthday 24 Game 🎂</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive;
+      background: linear-gradient(to right, #ffe0ec, #ffd6a5);
+      text-align: center;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #ff4081;
+      font-size: 2.8em;
+    }
+
+    .friend-photo {
+      margin: 20px auto;
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 4px solid #ff4081;
+    }
+
+    #game {
+      margin-top: 30px;
+      font-size: 1.2em;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 250px;
+      font-size: 1em;
+      border-radius: 8px;
+      border: 2px solid #ff4081;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 1em;
+      background-color: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #e91e63;
+    }
+
+    #message, #timeout-message {
+      margin-top: 30px;
+      font-size: 1.5em;
+      color: #4a148c;
+      display: none;
+    }
+
+    .numbers {
+      font-weight: bold;
+      font-size: 1.5em;
+      color: #ff0066;
+    }
+
+    #timer {
+      font-size: 1.2em;
+      color: #d50000;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 Happy Birthday Game! 🎉</h1>
+
+  <img src="irna.jpg" alt="Best Friend" class="friend-photo" />
+
+  <p>Gunakan 4 angka berikut untuk menghasilkan <strong>24</strong> gunakan + − × ÷</p>
+
+  <div id="game">
+    <div class="numbers" id="numbers">Loading...</div>
+    <div id="timer">Time left: 60s</div>
+    <input type="text" id="answer" placeholder="Your expression here" />
+    <br />
+    <button onclick="checkAnswer()">Submit</button>
+  </div>
+
+  <div id="message">
+    🎉 You did it!<br />
+    Hey bestie! 😄 Happy 24th Birthday! You're amazing and I hope your day is full of love, money, and laughter! 💖🎂, Sua dulu e
+  </div>
+
+  <div id="timeout-message">
+    ⏰ Time's up!<br />
+    Don't worry, you're still the best — and it's your birthday, after all! 🥳
+  </div>
+
+  <!-- Background Music (starts after click) -->
+  <audio id="bg-music" loop>
+    <source src="happy-birthday.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    let numbers = [];
+    let timeLeft = 60;
+    let timerId;
+
+    function generateNumbers() {
+      numbers = [];
+      for (let i = 0; i < 4; i++) {
+        numbers.push(Math.floor(Math.random() * 9) + 1);
+      }
+      document.getElementById("numbers").innerText = numbers.join(", ");
+    }
+
+    function isUsingAllNumbers(input) {
+      const digits = input.match(/\d+/g)?.map(Number) || [];
+      const required = [...numbers];
+      for (let d of digits) {
+        const idx = required.indexOf(d);
+        if (idx !== -1) {
+          required.splice(idx, 1);
+        } else {
+          return false;
+        }
+      }
+      return required.length === 0;
+    }
+
+    function checkAnswer() {
+      const input = document.getElementById("answer").value;
+      const music = document.getElementById("bg-music");
+      music.play(); // start music on interaction
+
+      try {
+        const result = eval(input);
+        if (Math.abs(result - 24) < 0.001 && isUsingAllNumbers(input)) {
+          clearInterval(timerId);
+          document.getElementById("message").style.display = "block";
+          document.getElementById("game").style.display = "none";
+        } else {
+          alert("That doesn't equal 24 or doesn't use all numbers. Try again!");
+        }
+      } catch {
+        alert("Invalid expression. Please try again.");
+      }
+    }
+
+    function startTimer() {
+      timerId = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = `Time left: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          document.getElementById("game").style.display = "none";
+          document.getElementById("timeout-message").style.display = "block";
+        }
+      }, 1000);
+    }
+
+    // Initialize
+    window.onload = function () {
+      generateNumbers();
+      startTimer();
+    };
+  </script>
+</body>
+</html>
